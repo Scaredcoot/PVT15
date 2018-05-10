@@ -6,6 +6,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.nio.charset.Charset;
+import java.text.ParseException;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -39,7 +40,7 @@ public class SMHIDataReader {
 				System.out.println("SMHIDataReader.getPlaceDataForTonight() kastar JSONException");
 				e.printStackTrace();
 			}
-			System.out.println(obj.toString());
+			System.out.println(sortedParametersArray.toString());
 		return obj;
 	}
 	
@@ -151,14 +152,98 @@ public class SMHIDataReader {
 			newParametersArray.put(new JSONObject().put("cloudiness",cloudiness));
 		}
 		
-		
-//		for (int p = 0; p < sortedParametersArray.length(); p++) //just to print, delete later
-//		{
-//			System.out.println(sortedParametersArray.getJSONObject(p).get("validTime"));
-//			System.out.println(sortedParametersArray.getJSONObject(p).getJSONArray("parameters").toString());
-//		}
+		setGradeTonight();
+		gradeForecast();
 	}
 	
+	private void setGradeTonight () throws JSONException
+	{	
+		
+		JSONArray parametersArray = sortedParametersArray.getJSONObject(0).getJSONArray("parameters");
+		
+		double temp = parametersArray.getJSONObject(0).getDouble("temp");
+		double rainfall = parametersArray.getJSONObject(1).getDouble("rainfall");
+		int cloudiness = parametersArray.getJSONObject(2).getInt("cloudiness");
+		ReflectionSensor sensor = new ReflectionSensor();
+		int lighReflection = sensor.getSensorData(rainfall);
+		
+		String grade = null;
+		
+		if (temp < 10.0 && rainfall == 0 && cloudiness < 1 && lighReflection < 2)
+		{
+			grade = "Excellent";
+			parametersArray.put(new JSONObject().put("grade",grade));
+			return;
+		}
+		if (temp < 15.0 && rainfall == 0 && cloudiness < 1 && lighReflection < 3)
+		{
+			grade = "Good";
+			parametersArray.put(new JSONObject().put("grade",grade));
+			return;
+		}
+		if (temp < 20.0 && rainfall == 0 && cloudiness < 2 && lighReflection < 3)
+		{
+			grade = "Ok";
+			parametersArray.put(new JSONObject().put("grade",grade));
+			return;
+		}
+		else {grade = "Bad";
+		parametersArray.put(new JSONObject().put("grade",grade));
+		}
+		
+	}
+	
+	private void gradeForecast() throws JSONException
+	{
+
+		for (int k = 1; k < sortedParametersArray.length(); k++) {
+		
+		JSONArray ParametersArray = sortedParametersArray.getJSONObject(k).getJSONArray("parameters");
+		String validTime = sortedParametersArray.getJSONObject(k).getString("validTime");
+		gradeForecastSort (validTime, ParametersArray);
+		}
+		
+		}
+	private void gradeForecastSort (String validTime, JSONArray ParametersArray) throws JSONException
+	{
+			JSONArray forecastArray = new JSONArray();
+			
+			DateHandler insta  = new DateHandler();
+			String weekDay = insta.getWeekDay (validTime);
+			
+			double temp = ParametersArray.getJSONObject(0).getDouble("temp");
+			double rainfall = ParametersArray.getJSONObject(1).getDouble("rainfall");
+			int cloudiness = ParametersArray.getJSONObject(2).getInt("cloudiness");
+			
+			String grade;
+			
+			ParametersArray.put(new JSONObject().put("forecast", forecastArray));
+			forecastArray.put(new JSONObject().put("weekDay", weekDay));
+			
+			if (temp < 10.0 && rainfall == 0 && cloudiness < 1)
+			{
+				grade = "Excellent";
+				forecastArray.put(new JSONObject().put("grade", grade));
+				return;
+			}
+			else if (temp < 15.0 && rainfall == 0 && cloudiness < 1)
+			{
+				grade = "Good";	
+				forecastArray.put(new JSONObject().put("grade", grade));
+				return;
+			}
+			else if (temp < 20.0 && rainfall == 0 && cloudiness < 2)
+			{
+				grade = "Ok";
+				forecastArray.put(new JSONObject().put("grade", grade));
+				return;
+			}
+			else {grade = "Bad";
+			forecastArray.put(new JSONObject().put("grade", grade));
+			return;
+			}
+			
+		}
 	
 	private JSONObject readJsonFromUrl(String url) throws IOException, JSONException {
 		String text = readStringFromUrl(url);
