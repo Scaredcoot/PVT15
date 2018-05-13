@@ -152,98 +152,68 @@ public class SMHIDataReader {
 			newParametersArray.put(new JSONObject().put("cloudiness",cloudiness));
 		}
 		
-		setGradeTonight();
-		gradeForecast();
+		formatForecastArray();
 	}
 	
-	private void setGradeTonight () throws JSONException
+	private void formatForecastArray () throws JSONException
 	{	
 		
-		JSONArray parametersArray = sortedParametersArray.getJSONObject(0).getJSONArray("parameters");
+		for (int k = 0; k < sortedParametersArray.length(); k++) {
+		
+		JSONArray parametersArray = sortedParametersArray.getJSONObject(k).getJSONArray("parameters");
 		
 		double temp = parametersArray.getJSONObject(0).getDouble("temp");
 		double rainfall = parametersArray.getJSONObject(1).getDouble("rainfall");
 		int cloudiness = parametersArray.getJSONObject(2).getInt("cloudiness");
 		ReflectionSensor sensor = new ReflectionSensor();
-		int lighReflection = sensor.getSensorData(rainfall);
 		
+		if (k== 0)
+		{
+			int lighReflection = sensor.getSensorData(rainfall);
+			String grade = setGrade(parametersArray,temp,rainfall,cloudiness,lighReflection);
+			parametersArray.put(new JSONObject().put("grade",grade));
+			//System.out.println(sortedParametersArray); for testing
+		}else {
+			String validTime = sortedParametersArray.getJSONObject(k).getString("validTime");
+			String weekDay = getWeekDay(validTime);
+			int lighReflection = 0;
+			String grade = setGrade(parametersArray,temp,rainfall,cloudiness,lighReflection);
+			sortedParametersArray.put(k, new JSONObject().put("day"+(k+1), weekDay).put("grade", grade));
+			}
+		}
+		
+	}
+	
+	private String setGrade (JSONArray ParametersArray, double temp, double rainfall, int cloudiness, int lighReflection )
+	{
 		String grade = null;
 		
 		if (temp < 10.0 && rainfall == 0 && cloudiness < 1 && lighReflection < 2)
 		{
 			grade = "Excellent";
-			parametersArray.put(new JSONObject().put("grade",grade));
-			return;
+			return grade;
 		}
 		if (temp < 15.0 && rainfall == 0 && cloudiness < 1 && lighReflection < 3)
 		{
 			grade = "Good";
-			parametersArray.put(new JSONObject().put("grade",grade));
-			return;
+			return grade;
 		}
 		if (temp < 20.0 && rainfall == 0 && cloudiness < 2 && lighReflection < 3)
 		{
 			grade = "Ok";
-			parametersArray.put(new JSONObject().put("grade",grade));
-			return;
+			return grade;
 		}
 		else {grade = "Bad";
-		parametersArray.put(new JSONObject().put("grade",grade));
-		}
-		
+		return grade;
+	}
 	}
 	
-	private void gradeForecast() throws JSONException
+	private String getWeekDay(String validTime) throws JSONException
 	{
-
-		for (int k = 1; k < sortedParametersArray.length(); k++) {
-		
-		JSONArray ParametersArray = sortedParametersArray.getJSONObject(k).getJSONArray("parameters");
-		String validTime = sortedParametersArray.getJSONObject(k).getString("validTime");
-		gradeForecastSort (validTime, ParametersArray);
-		}
-		
-		}
-	private void gradeForecastSort (String validTime, JSONArray ParametersArray) throws JSONException
-	{
-			JSONArray forecastArray = new JSONArray();
-			
-			DateHandler insta  = new DateHandler();
-			String weekDay = insta.getWeekDay (validTime);
-			
-			double temp = ParametersArray.getJSONObject(0).getDouble("temp");
-			double rainfall = ParametersArray.getJSONObject(1).getDouble("rainfall");
-			int cloudiness = ParametersArray.getJSONObject(2).getInt("cloudiness");
-			
-			String grade;
-			
-			ParametersArray.put(new JSONObject().put("forecast", forecastArray));
-			forecastArray.put(new JSONObject().put("weekDay", weekDay));
-			
-			if (temp < 10.0 && rainfall == 0 && cloudiness < 1)
-			{
-				grade = "Excellent";
-				forecastArray.put(new JSONObject().put("grade", grade));
-				return;
-			}
-			else if (temp < 15.0 && rainfall == 0 && cloudiness < 1)
-			{
-				grade = "Good";	
-				forecastArray.put(new JSONObject().put("grade", grade));
-				return;
-			}
-			else if (temp < 20.0 && rainfall == 0 && cloudiness < 2)
-			{
-				grade = "Ok";
-				forecastArray.put(new JSONObject().put("grade", grade));
-				return;
-			}
-			else {grade = "Bad";
-			forecastArray.put(new JSONObject().put("grade", grade));
-			return;
-			}
-			
-		}
+		DateHandler insta  = new DateHandler();
+		String weekDay = insta.getWeekDay (validTime);
+		return weekDay;
+	}	
 	
 	private JSONObject readJsonFromUrl(String url) throws IOException, JSONException {
 		String text = readStringFromUrl(url);
