@@ -27,7 +27,7 @@ public class SMHIDataReader {
 	
 	public JSONArray getPlaceDataForTonight(String placeName){ //kallas från PlaceManager (mellan metod till requestData(){...} )
 		//JSONObject obj = null;
-		JSONArray array = new JSONArray();
+		JSONArray array = null;
 		
 			try {
 				
