@@ -42,8 +42,9 @@ public class SMHIDataReader {
 				System.out.println("SMHIDataReader.getPlaceDataForTonight() kastar JSONException");
 				e.printStackTrace();
 			}
-			System.out.println(sortedParametersArray.toString());
-		return array;
+			//System.out.println(sortedParametersArray.toString());
+		//return obj;
+			return array;
 	}
 	
 	public void requestData (String location) throws IOException, JSONException //call this method and pass in String

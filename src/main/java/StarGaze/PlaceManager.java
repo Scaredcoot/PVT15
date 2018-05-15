@@ -44,7 +44,8 @@ public class PlaceManager {
 	 **/
 	@RequestMapping("/gardet/today") //pvt.dsv.su.se/Group04/place/gardet/today
 	public String gardet(){
-		return getJSONObjectForPlace("gardet").toString();
+		//return getJSONObjectForPlace("gardet").toString();
+		return getJSONObjectForPlace("gardet");
 	}
 	@RequestMapping("/grimsta/today") //pvt.dsv.su.se/Group04/place/grimsta/today
 	public String grimsta(){
@@ -63,7 +64,8 @@ public class PlaceManager {
 		return getJSONObjectForPlace("tyrestanationalpark").toString();
 	}
 	
-	private JSONArray getJSONObjectForPlace(String placeName){
+	//private JSONArray getJSONObjectForPlace(String placeName){
+	private String getJSONObjectForPlace(String placeName){
 		//JSONObject obj = new JSONObject();
 		JSONArray array = new JSONArray();
 		
@@ -75,7 +77,7 @@ public class PlaceManager {
 		array = smhi.getPlaceDataForTonight(placeName);
 		
 		//return obj;
-		return array;
+		return array.toString();
 	}
 	private boolean checkDbDate(){
 		boolean dbUpdatedStatus = false;
