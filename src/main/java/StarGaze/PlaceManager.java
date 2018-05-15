@@ -10,6 +10,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Random;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -62,16 +63,19 @@ public class PlaceManager {
 		return getJSONObjectForPlace("tyrestanationalpark").toString();
 	}
 	
-	private JSONObject getJSONObjectForPlace(String placeName){
-		JSONObject obj = new JSONObject();
+	private JSONArray getJSONObjectForPlace(String placeName){
+		//JSONObject obj = new JSONObject();
+		JSONArray array = new JSONArray();
 		
 		if(!checkDbDate() && getCurrentTime().compareTo("06:00:00") > 0){ // CHOOSE APPROPRIATE TIME FOR THRESHOLD!!
 			updateDbDate();
 		}
 		SMHIDataReader smhi = new SMHIDataReader();
-		obj = smhi.getPlaceDataForTonight(placeName);
+	//	obj = smhi.getPlaceDataForTonight(placeName);
+		array = smhi.getPlaceDataForTonight(placeName);
 		
-		return obj;
+		//return obj;
+		return array;
 	}
 	private boolean checkDbDate(){
 		boolean dbUpdatedStatus = false;

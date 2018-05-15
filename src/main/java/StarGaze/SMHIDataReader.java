@@ -25,13 +25,15 @@ public class SMHIDataReader {
 	
 	//------------------------------Methods------------------------------------------
 	
-	public JSONObject getPlaceDataForTonight(String placeName){ //kallas från PlaceManager (mellan metod till requestData(){...} )
-		JSONObject obj = null;
+	public JSONArray getPlaceDataForTonight(String placeName){ //kallas från PlaceManager (mellan metod till requestData(){...} )
+		//JSONObject obj = null;
+		JSONArray array = null;
 		
 			try {
 				
 				requestData(placeName);
-				obj = sortedParametersArray.getJSONObject(0);
+				//obj = sortedParametersArray.getJSONObject(0);
+				array = sortedParametersArray;
 				
 			} catch (IOException e) {
 				System.out.println("SMHIDataReader.getPlaceDataForTonight() kastar IOException");
@@ -41,7 +43,7 @@ public class SMHIDataReader {
 				e.printStackTrace();
 			}
 			System.out.println(sortedParametersArray.toString());
-		return obj;
+		return array;
 	}
 	
 	public void requestData (String location) throws IOException, JSONException //call this method and pass in String
