@@ -178,10 +178,9 @@ public class SMHIDataReader {
 			//System.out.println(sortedParametersArray); for testing
 		}else {
 			String validTime = sortedParametersArray.getJSONObject(k).getString("validTime");
-			String weekDay = getWeekDay(validTime);
 			int lighReflection = 0;
 			String grade = setGrade(parametersArray,temp,rainfall,cloudiness,lighReflection);
-			sortedParametersArray.put(k, new JSONObject().put("day"+(k+1), weekDay).put("grade", grade));
+			sortedParametersArray.put(k, new JSONObject().put("day"+(k+1), grade));
 			}
 		}
 		
