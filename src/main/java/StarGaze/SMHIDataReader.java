@@ -17,6 +17,7 @@ public class SMHIDataReader {
 	
 	private JSONArray tempJsonArray = new JSONArray(); //hold all parameters for 6 days forward, on correct times (00:00)
 	private JSONArray sortedParametersArray = new JSONArray(); //holds sorted parameters for chosen days on chosen time
+	static String finalString;
 	
 	
 	//------------------------------Contructors------------------------------------------
@@ -160,7 +161,8 @@ public class SMHIDataReader {
 	
 	private void formatForecastArray () throws JSONException
 	{	
-		
+		StringBuilder testString = new StringBuilder();
+		testString.append("{\"days\":{");
 		for (int k = 0; k < sortedParametersArray.length(); k++) {
 		
 		JSONArray parametersArray = sortedParametersArray.getJSONObject(k).getJSONArray("parameters");
@@ -174,16 +176,24 @@ public class SMHIDataReader {
 		{
 			int lighReflection = sensor.getSensorData(rainfall);
 			String grade = setGrade(parametersArray,temp,rainfall,cloudiness,lighReflection);
-			parametersArray.put(new JSONObject().put("grade",grade));
+			//parametersArray.put(new JSONObject().put("grade",grade));
+			testString.append("\"day1\":{\"temp\":\"" + temp + "\",\"rainfall\":\"" + rainfall + "\",\"cloudiness\":\"" + cloudiness + "\",\"grade\":\""  + grade + "\"},");
 			//System.out.println(sortedParametersArray); for testing
 		}else {
 			String validTime = sortedParametersArray.getJSONObject(k).getString("validTime");
+			String weekDay = getWeekDay(validTime);
 			int lighReflection = 0;
 			String grade = setGrade(parametersArray,temp,rainfall,cloudiness,lighReflection);
-			sortedParametersArray.put(k, new JSONObject().put("day"+(k+1), grade));
+			//sortedParametersArray.put(k, new JSONObject().put("day"+(k+1), grade));
+			if(k == 5) {
+				testString.append("\"day" + (k+1) + "\":\"" + grade + "\"}}");
+			} else {
+				testString.append("\"day" + (k+1) + "\":\"" + grade + "\",");
+			}
 			}
 		}
-		
+		System.err.println(testString);
+		finalString = testString.toString();
 	}
 	
 	private String setGrade (JSONArray ParametersArray, double temp, double rainfall, int cloudiness, int lighReflection )
