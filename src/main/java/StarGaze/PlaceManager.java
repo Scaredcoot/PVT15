@@ -44,24 +44,28 @@ public class PlaceManager {
 	 **/
 	@RequestMapping("/gardet/today") //pvt.dsv.su.se/Group04/place/gardet/today
 	public String gardet(){
-		//return getJSONObjectForPlace("gardet").toString();
-		return getJSONObjectForPlace("gardet");
+		String obj = getJSONObjectForPlace("gardet").toString();
+		return obj.substring(1, obj.length() - 1);
 	}
 	@RequestMapping("/grimsta/today") //pvt.dsv.su.se/Group04/place/grimsta/today
 	public String grimsta(){
-		return getJSONObjectForPlace("grimsta").toString();
+		String obj = getJSONObjectForPlace("grimsta").toString();
+		return obj.substring(1, obj.length() - 1);
 	}
 	@RequestMapping("/jarvafaltet/today") //pvt.dsv.su.se/Group04/place/jarvafaltet/today
 	public String jarvafaltet(){
-		return getJSONObjectForPlace("jarvafaltet").toString();
+		String obj = getJSONObjectForPlace("jarvafaltet").toString();
+		return obj.substring(1, obj.length() - 1);
 	}
 	@RequestMapping("/nackareservatet/today") //pvt.dsv.su.se/Group04/place/nackareservatet/today
 	public String nackareservatet(){
-		return getJSONObjectForPlace("nackareservatet").toString();
+		String obj = getJSONObjectForPlace("nackareservatet").toString();
+		return obj.substring(1, obj.length() - 1);
 	}
 	@RequestMapping("/tyrestanationalpark/today") //pvt.dsv.su.se/Group04/place/tyrestanationalpark/today
 	public String tyrestanationalpark(){
-		return getJSONObjectForPlace("tyrestanationalpark").toString();
+		String obj = getJSONObjectForPlace("tyrestanationalpark").toString();
+		return obj.substring(1, obj.length() - 1);
 	}
 	
 	//private JSONArray getJSONObjectForPlace(String placeName){
